@@ -154,7 +154,6 @@ func (h *Handler) BuildRoutes(router routes.Route) {
 	router.NewRoute(routes.DELETE, h.subRoute+"/{id}", h.delete)
 }
 
-
 // ! Recommended private functions
 // * Create stores to get DB data like this 
 /*
@@ -244,16 +243,17 @@ func (s *Store) GetConn() *sql.DB {
 
 	nameTitle := cases.Title(language.Und).String(name)
 
-	typesContent := fmt.Sprintf(`package %s 
+	typesContent := fmt.Sprintf(`package %s
+
 	// TODO: Create types and dtos for %s
 
-	type %s struct {
-		ID int64 %s
-	}
+type %s struct {
+	ID int64 %s
+}
 	
-	type New%s struct {
-	
-	}
+type New%s struct {
+
+}
 	
 	`, name, name, nameTitle, json, nameTitle)
 
