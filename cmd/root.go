@@ -248,7 +248,7 @@ func (s *Store) GetConn() *sql.DB {
 	// TODO: Create types and dtos for %s
 
 	type %s struct {
-			ID int64 %s
+		ID int64 %s
 	}
 	
 	type New%s struct {
