@@ -1,2 +1,2 @@
 build:
-	@go build -o bin/gbase
+	@go build -o bin/gbase main.go
