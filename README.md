@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
- <img class="" width=200px height=200px src="https://files.oaiusercontent.com/file-3Htw9zJAcqhirPe6g9UgGWdj?se=2024-10-08T13%3A13%3A34Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D894318ed-629f-41aa-8a29-7dbcbd0ec537.webp&sig=lTF7sqftCXj3llsKptjjQaq/w91/WqZw1XpuhW7IFdk%3D" alt="Project logo"></a>
+ <img class="" width=200px height=200px src="https://utfs.io/f/oB0PkguUYigmfpwItcvHJ0FhWIeXPNdfEA8DosjVt5Znw9zc" alt="Project logo"></a>
 </p>
 
 <h3 align="center">Go-Base</h3>
