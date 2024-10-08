@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const (
@@ -145,6 +147,11 @@ func NewHandler() *Handler {
 
 func (h *Handler) BuildRoutes(router routes.Route) {
 	// TODO implement the routes call
+	router.NewRoute(routes.POST, h.subRoute, h.create)
+	router.NewRoute(routes.GET, h.subRoute, h.list)
+	router.NewRoute(routes.GET, h.subRoute+"/{id}", h.getById)
+	router.NewRoute(routes.PUT, h.subRoute+"/{id}", h.update)
+	router.NewRoute(routes.DELETE, h.subRoute+"/{id}", h.delete)
 }
 
 
@@ -161,6 +168,26 @@ func (h *Handler) BuildRoutes(router routes.Route) {
 	* Use resolver to getParams, getBody and writeResponse
 
 */
+
+func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *Handler) getById(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
+
+}
 `, name, name)
 	storeContent := fmt.Sprintf(`package %s
 
@@ -208,10 +235,27 @@ func (s *Store) GetConn() *sql.DB {
 
 	return s.db
 }
+
+
 // TODO: Implement the store consults`, name)
-	typesContent := fmt.Sprintf(`package %s
+
+	id := `"id"`
+	json := fmt.Sprintf("`json:%s`", id)
+
+	nameTitle := cases.Title(language.Und).String(name)
+
+	typesContent := fmt.Sprintf(`package %s 
+	// TODO: Create types and dtos for %s
+
+	type %s struct {
+			ID int64 %s
+	}
 	
-	// TODO: Create types and dtos for %s`, name, name)
+	type New%s struct {
+	
+	}
+	
+	`, name, name, nameTitle, json, nameTitle)
 
 	// Criar arquivos handler.go, store.go e types.go
 	files := map[string]string{
