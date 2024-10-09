@@ -294,6 +294,28 @@ func cloneRepo(repo string, dest string) {
 		log.Fatalf(Red+"Erro ao remover a pasta .git de %s: %v"+Reset, repoDir, err)
 	}
 	fmt.Printf(Yellow+"Removida a pasta .git de %s\n"+Reset, repoDir)
+
+	// Extrair o nome do módulo da URL do repositório
+	repoName := filepath.Base(repo)
+	repoName = repoName[:len(repoName)-4] // Remover ".git" do nome do repositório
+
+	// Executar go mod init
+	cmd = exec.Command("go", "mod", "init", repoName)
+	cmd.Dir = repoDir
+	output, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf(Red+"Erro ao executar 'go mod init' em %s: %v\nOutput: %s"+Reset, repoDir, err, string(output))
+	}
+	fmt.Printf(Green+"'go mod init' executado com sucesso em %s\n"+Reset, repoDir)
+
+	// Executar go mod tidy
+	cmd = exec.Command("go", "mod", "tidy")
+	cmd.Dir = repoDir
+	output, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf(Red+"Erro ao executar 'go mod tidy' em %s: %v\nOutput: %s"+Reset, repoDir, err, string(output))
+	}
+	fmt.Printf(Green+"'go mod tidy' executado com sucesso em %s\n"+Reset, repoDir)
 }
 
 func initGitRepo(dest string) {
