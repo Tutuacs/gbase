@@ -68,6 +68,8 @@ Install the [Go 1.23.1](https://go.dev/dl/)
 
 ```bash
 linux: https://go.dev/dl/go1.23.1.src.tar.gz
+macOS: https://go.dev/dl/go1.23.1.darwin-arm64.pkg
+Windows: https://go.dev/dl/go1.23.1.windows-amd64.msi
 ```
 
 After installing all you can add the export path on your .bashrc or .zshrc
