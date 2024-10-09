@@ -329,19 +329,26 @@ func initGitRepo(dest string) {
 }
 
 func createGoWork(dest string) {
-	goWorkContent := `go 1.23.1
-
-use (
-    ./cmd
-    ./pkg
-    ./internal
-)`
-
-	workFilePath := filepath.Join(dest, "go.work")
-	if err := os.WriteFile(workFilePath, []byte(goWorkContent), 0644); err != nil {
-		log.Fatalf(Red+"Erro ao criar arquivo go.work: %v"+Reset, err)
+	// Inicializa o workspace com go work
+	cmd := exec.Command("go", "work", "init")
+	cmd.Dir = dest
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf(Red+"Erro ao inicializar o workspace: %v\nOutput: %s"+Reset, err, string(output))
 	}
-	fmt.Println(Green + "Arquivo go.work criado com sucesso" + Reset)
+	fmt.Println(Green + "Workspace inicializado com sucesso" + Reset)
+
+	// Adiciona os diretórios cmd, pkg e internal ao workspace
+	dirs := []string{"./cmd", "./pkg", "./internal"}
+	for _, dir := range dirs {
+		cmd = exec.Command("go", "work", "use", dir)
+		cmd.Dir = dest
+		output, err = cmd.CombinedOutput()
+		if err != nil {
+			log.Fatalf(Red+"Erro ao adicionar %s ao workspace: %v\nOutput: %s"+Reset, dir, err, string(output))
+		}
+		fmt.Printf(Green+"%s adicionado ao workspace com sucesso\n"+Reset, dir)
+	}
 }
 
 func createEnvFile(dest string) {
