@@ -83,6 +83,11 @@ Paste on the end of the file
 export PATH=$HOME/gbase/bin:$PATH
 ```
 
+Not using linux? make a build for your current OS
+```bash
+cd ~/gbase && make build
+```
+
 ## 🎈 Usage <a name="usage"></a>
 
 All done, you can now create new projects with the command
