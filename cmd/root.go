@@ -46,6 +46,7 @@ var newCmd = &cobra.Command{
 
 		// Criar os arquivos de configuração
 		createGoWork(destDir)
+		createGitIgnoreFile(destDir)
 		createEnvFile(destDir)
 		createDockerComposeFile(destDir)
 		createMakefile(destDir, projectName)
@@ -349,6 +350,17 @@ func createGoWork(dest string) {
 		}
 		fmt.Printf(Green+"%s adicionado ao workspace com sucesso\n"+Reset, dir)
 	}
+}
+
+func createGitIgnoreFile(dest string) {
+	gitIgnoreContent := `go*.sum
+/bin
+`
+	gitIgnoreFilePath := filepath.Join(dest, ".gitignore")
+	if err := os.WriteFile(gitIgnoreFilePath, []byte(gitIgnoreContent), 0644); err != nil {
+		log.Fatalf(Red+"Erro ao criar arquivo .gitignore: %v"+Reset, err)
+	}
+	fmt.Println(Green + "Arquivo .gitignore criado com sucesso" + Reset)
 }
 
 func createEnvFile(dest string) {
