@@ -300,7 +300,7 @@ func cloneRepo(repo string, dest string) {
 	repoName = repoName[:len(repoName)-4] // Remover ".git" do nome do repositório
 
 	// Executar go mod init
-	cmd = exec.Command("go", "mod", "init", repoName)
+	cmd = exec.Command("go", "mod", "init", "github.com/Tutuacs/"+repoName)
 	cmd.Dir = repoDir
 	output, err = cmd.CombinedOutput()
 	if err != nil {
