@@ -83,9 +83,14 @@ Paste on the end of the file
 export PATH=$HOME/gbase/bin:$PATH
 ```
 
-Not using linux? make a build for your current OS
+Not using linux? make a build for your current OS (using Makefile)
 ```bash
 cd ~/gbase && make build
+```
+
+Whithout the Makefile you can run the command
+```bash
+cd ~/gbase && go build -o bin/gbase main.go
 ```
 
 ## 🎈 Usage <a name="usage"></a>
