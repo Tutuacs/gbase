@@ -256,7 +256,7 @@ type New%sDto struct {
 
 }
 
-type Update%sDto {
+type Update%sDto struct {
 
 }
 	
