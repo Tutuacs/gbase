@@ -252,11 +252,15 @@ type %s struct {
 	ID int64 %s
 }
 	
-type New%s struct {
+type New%sDto struct {
+
+}
+
+type Update%sDto {
 
 }
 	
-	`, name, name, nameTitle, json, nameTitle)
+	`, name, name, nameTitle, json, nameTitle, nameTitle)
 
 	// Criar arquivos handler.go, store.go e types.go
 	files := map[string]string{
