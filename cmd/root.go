@@ -359,6 +359,7 @@ func createGoWork(dest string) {
 func createGitIgnoreFile(dest string) {
 	gitIgnoreContent := `go*.sum
 /bin
+.env
 `
 	gitIgnoreFilePath := filepath.Join(dest, ".gitignore")
 	if err := os.WriteFile(gitIgnoreFilePath, []byte(gitIgnoreContent), 0644); err != nil {
@@ -388,13 +389,19 @@ JWT_SECRET="secret"
 	if err := os.WriteFile(envFilePath, []byte(envContent), 0644); err != nil {
 		log.Fatalf(Red+"Erro ao criar arquivo .env: %v"+Reset, err)
 	}
+	envExFilePath := filepath.Join(dest, ".env.example")
+	if err := os.WriteFile(envExFilePath, []byte(envContent), 0644); err != nil {
+		log.Fatalf(Red+"Erro ao criar arquivo .env.example: %v"+Reset, err)
+	}
 	fmt.Println(Green + "Arquivo .env criado com sucesso" + Reset)
+	fmt.Println(Green + "Arquivo .env.example criado com sucesso" + Reset)
 }
 
 func createDockerComposeFile(dest string) {
 	dockerComposeContent := `services:
   default_postgres:
     container_name: default_postgres
+	restart: always
     image: postgres:13.5
     environment:
       POSTGRES_DB: $DB_NAME
