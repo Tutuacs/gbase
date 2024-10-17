@@ -42,7 +42,6 @@ var newCmd = &cobra.Command{
 		for _, repo := range repos {
 			cloneRepo(repo, destDir)
 		}
-		initGitRepo(destDir)
 
 		// Criar os arquivos de configuração
 		createGoWork(destDir)
@@ -50,6 +49,7 @@ var newCmd = &cobra.Command{
 		createEnvFile(destDir)
 		createDockerComposeFile(destDir)
 		createMakefile(destDir, projectName)
+		initGitRepo(destDir)
 	},
 }
 
@@ -78,13 +78,25 @@ var generateCmd = &cobra.Command{
 			log.Fatalf(Red + "Você precisa estar na pasta do workspace para gerar handlers." + Reset)
 		}
 
+		// Verifica se a pasta 'pkg' existe
+		pkgDir := filepath.Join(currentDir, "pkg")
+		if _, err := os.Stat(pkgDir); os.IsNotExist(err) {
+			log.Fatalf(Red + "Você precisa estar na pasta do workspace para gerar handlers." + Reset)
+		}
+
+		// Verifica se a pasta 'pkg' existe
+		typesDir := filepath.Join(pkgDir, "types")
+		if _, err := os.Stat(typesDir); os.IsNotExist(err) {
+			log.Fatalf(Red + "Você precisa estar na pasta do workspace para gerar handlers." + Reset)
+		}
+
 		// Criar os arquivos de handler
 		handlerDir := filepath.Join(internalDir, name)
 		if err := os.MkdirAll(handlerDir, os.ModePerm); err != nil {
 			log.Fatalf(Red+"Erro ao criar diretório de handler: %v"+Reset, err)
 		}
 
-		createHandlerFiles(handlerDir, name)
+		createHandlerFiles(handlerDir, typesDir, name)
 	},
 }
 
@@ -129,7 +141,7 @@ func setupProjectDirectory(projectName string) string {
 }
 
 // Função auxiliar para criar arquivos do handler
-func createHandlerFiles(handlerDir, name string) {
+func createHandlerFiles(handlerDir, typesDir, name string) {
 	handlerContent := fmt.Sprintf(`package %s
 
 import (
@@ -244,29 +256,26 @@ func (s *Store) GetConn() *sql.DB {
 
 	nameTitle := cases.Title(language.Und).String(name)
 
-	typesContent := fmt.Sprintf(`package %s
+	typesContent := fmt.Sprintf(`package types
 
-	// TODO: Create types and dtos for %s
+// TODO: Create types and dtos for %s handler
 
 type %s struct {
 	ID int64 %s
 }
 	
 type New%sDto struct {
-
 }
 
 type Update%sDto struct {
-
 }
 	
-	`, name, name, nameTitle, json, nameTitle, nameTitle)
+	`, name, nameTitle, json, nameTitle, nameTitle)
 
 	// Criar arquivos handler.go, store.go e types.go
 	files := map[string]string{
 		"handler.go": handlerContent,
 		"store.go":   storeContent,
-		"types.go":   typesContent,
 	}
 
 	for fileName, content := range files {
@@ -275,6 +284,11 @@ type Update%sDto struct {
 			log.Fatalf(Green+"Erro ao criar arquivo %s: %v"+Reset, fileName, err)
 		}
 		fmt.Printf(Green+"Arquivo %s criado em %s\n"+Reset, fileName, handlerDir)
+	}
+
+	filePath := filepath.Join(typesDir, fmt.Sprintf("%s.go", name))
+	if err := os.WriteFile(filePath, []byte(typesContent), 0644); err != nil {
+		log.Fatalf(Green+"Erro ao criar arquivo %s: %v"+Reset, name, err)
 	}
 }
 
@@ -324,9 +338,26 @@ func cloneRepo(repo string, dest string) {
 }
 
 func initGitRepo(dest string) {
+
 	cmd := exec.Command("git", "init")
+	cmdAdd := exec.Command("git", "add", ".")
+	cmdCommit := exec.Command("git", "commit", "-m", "init")
+
 	cmd.Dir = dest
+	cmdAdd.Dir = dest
+	cmdCommit.Dir = dest
+
 	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf(Red+"Erro ao inicializar o repositório git no diretório %s: %v\nOutput: %s"+Reset, dest, err, string(output))
+	}
+
+	output, err = cmdAdd.CombinedOutput()
+	if err != nil {
+		log.Fatalf(Red+"Erro ao inicializar o repositório git no diretório %s: %v\nOutput: %s"+Reset, dest, err, string(output))
+	}
+
+	output, err = cmdCommit.CombinedOutput()
 	if err != nil {
 		log.Fatalf(Red+"Erro ao inicializar o repositório git no diretório %s: %v\nOutput: %s"+Reset, dest, err, string(output))
 	}
