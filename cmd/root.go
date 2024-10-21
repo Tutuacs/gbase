@@ -432,7 +432,7 @@ func createDockerComposeFile(dest string) {
 	dockerComposeContent := `services:
   default_postgres:
     container_name: default_postgres
-	restart: always
+    restart: always
     image: postgres:13.5
     environment:
       POSTGRES_DB: $DB_NAME
