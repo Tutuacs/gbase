@@ -411,9 +411,16 @@ DB_USER="user"
 DB_PASS="pass"
 DB_NAME="defaultDb"
 
+# Redis Configuration
+REDIS_HOST="127.0.0.1:6379"
+
+# Redis Configuration
+MQTT_ADDR="mqtt://127.0.0.1:1883"
+
 # JWT Configuration
 JWT_EXP=604800  # 3600*24*7 (7 dias em segundos)
 JWT_SECRET="secret"
+
 `
 
 	envFilePath := filepath.Join(dest, ".env")
