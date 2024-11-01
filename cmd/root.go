@@ -412,10 +412,23 @@ DB_PASS="pass"
 DB_NAME="defaultDb"
 
 # Redis Configuration
-REDIS_HOST="127.0.0.1:6379"
+REDIS_ADDR="127.0.0.1:6379"
+REDIS_HOST="127.0.0.1"
+REDIS_PORT="6379"
 
-# Redis Configuration
-MQTT_ADDR="mqtt://127.0.0.1:1883"
+# Pub-Sub Configuration
+REDIS_EVENT_EXP="__keyevent@0__:expired"
+
+# MQTT Configuration
+MQTT_ADDR="127.0.0.1:1883"
+MQTT_PORT="1883"
+
+# SMTP Configuration
+SMTP_MAIL="arthursilva.mailtest@gmail.com"
+SMTP_PASS="xcyezdmrqithcyuo"
+SMTP_HOST="smtp.gmail.com"
+SMTP_ADDR="smtp.gmail.com:587"
+
 
 # JWT Configuration
 JWT_EXP=604800  # 3600*24*7 (7 dias em segundos)
@@ -447,6 +460,23 @@ func createDockerComposeFile(dest string) {
       POSTGRES_PASSWORD: $DB_PASS
     ports:
       - "$DB_PORT:5432"
+  
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: always
+    environment:
+      REDIS_HOST: $REDIS_HOST
+      REDIS_PORT: $REDIS_PORT
+    ports:
+      - "$REDIS_HOST:6379"
+
+  mqtt:
+    container_name: mqtt
+    image: eclipse-mosquitto:latest
+    restart: always
+    ports:
+      - "$MQTT_PORT:1883"
 `
 
 	dockerComposeFilePath := filepath.Join(dest, "docker-compose.yaml")
