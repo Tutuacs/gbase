@@ -429,10 +429,13 @@ SMTP_PASS="xcyezdmrqithcyuo"
 SMTP_HOST="smtp.gmail.com"
 SMTP_ADDR="smtp.gmail.com:587"
 
-
 # JWT Configuration
 JWT_EXP=604800  # 3600*24*7 (7 dias em segundos)
 JWT_SECRET="secret"
+
+# UploadThing Configuration
+UPLOADTHING_HOST="https://api.uploadthing.com"
+UPLOADTHING_SECRET="sk_live_***"
 
 `
 
