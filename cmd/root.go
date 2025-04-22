@@ -146,19 +146,30 @@ func createHandlerFiles(handlerDir, typesDir, name string) {
 
 import (
 	"net/http"
-
+	
+	// "github.com/Tutuacs/pkg/guards"
 	"github.com/Tutuacs/pkg/routes"
 )
 
 type Handler struct {
 	subRoute string
+	s        *Store
 }
 
-func NewHandler() *Handler {
-	return &Handler{subRoute: "/%s"}
+func NewHandler(s *Store) *Handler {
+	return &Handler{
+		subRoute: "/%s",
+		s:        s,
+	}
 }
 
 func (h *Handler) BuildRoutes(router routes.Route) {
+
+	// TODO you can use validation
+	// * g := guards.UseGuard(h.s.db)
+	// router.NewRoute(routes.POST, h.subRoute, g.AutenticatedRoute(h.create)) // ! Allow all roles
+	// router.NewRoute(routes.POST, h.subRoute, g.AutenticatedRoute(h.create, enums.ROLE_ADMIN, enums.ROLE_CLIENT)) // ! Allow specified roles
+
 	// TODO implement the routes call
 	router.NewRoute(routes.POST, h.subRoute, h.create)
 	router.NewRoute(routes.GET, h.subRoute, h.list)
@@ -170,14 +181,11 @@ func (h *Handler) BuildRoutes(router routes.Route) {
 // ! Recommended private functions
 // * Create stores to get DB data like this 
 /*
-	store, err := NewStore()
-	if err != nil {
-		return
-	}
-
-	defer store.CloseStore()
+	store := h.s
 
 	* Use resolver to getParams, getBody and writeResponse
+	! resolver.GetParams(r, "id")
+	! resolver.GetQueryParam(r, "token") // like: /url?token=123
 
 */
 
@@ -212,42 +220,19 @@ import (
 type Store struct {
 	db.Store
 	db      *sql.DB
-	extends bool
 	Table   string
 }
 
-func NewStore(conn ...*sql.DB) (*Store, error) {
-	if len(conn) == 0 {
-
-		con, err := db.NewConnection()
-
-		db.NewConnection()
-
-		return &Store{
-			db:      con,
-			extends: false,
-		}, err
+func NewStore(conn *sql.DB) (s *Store, err error) {
+	con, err := db.NewConnection()
+	if err != nil {
+		return
 	}
 
-	return &Store{
-		db:      conn[0],
-		extends: true,
-	}, nil
+	s = &Store{db: con, Table: "users"}
+
+	return
 }
-
-func (s *Store) CloseStore() {
-	if !s.extends {
-		s.db.Close()
-	}
-
-	// db.ScanRow()
-}
-
-func (s *Store) GetConn() *sql.DB {
-
-	return s.db
-}
-
 
 // TODO: Implement the store consults`, name)
 
@@ -341,7 +326,7 @@ func initGitRepo(dest string) {
 
 	cmd := exec.Command("git", "init")
 	cmdAdd := exec.Command("git", "add", ".")
-	cmdCommit := exec.Command("git", "commit", "-m", "init")
+	cmdCommit := exec.Command("git", "commit", "-m", ":sparkles: init: gbase initial commit")
 
 	cmd.Dir = dest
 	cmdAdd.Dir = dest
@@ -401,33 +386,35 @@ func createGitIgnoreFile(dest string) {
 
 func createEnvFile(dest string) {
 	envContent := `# API Configuration
-API_PORT=":9000"
+API_PORT="9000"
 
 # Database Configuration
 DB_HOST="127.0.0.1"
 DB_PORT="9999"
-DB_ADDR="127.0.0.1:9999"
+DB_ADDR="$DB_HOST:$DB_PORT"
 DB_USER="user"
 DB_PASS="pass"
 DB_NAME="defaultDb"
 
 # Redis Configuration
-REDIS_ADDR="127.0.0.1:6379"
 REDIS_HOST="127.0.0.1"
 REDIS_PORT="6379"
+REDIS_ADDR="$REDIS_HOST:$REDIS_PORT"
 
 # Pub-Sub Configuration
 REDIS_EVENT_EXP="__keyevent@0__:expired"
 
 # MQTT Configuration
-MQTT_ADDR="127.0.0.1:1883"
 MQTT_PORT="1883"
+MQTT_HOST="127.0.0.1"
+MQTT_ADDR="$MQTT_HOST:$MQTT_PORT"
 
 # SMTP Configuration
 SMTP_MAIL="arthursilva.mailtest@gmail.com"
-SMTP_PASS="xcyezdmrqithcyuo"
+SMTP_PASS="xcye zdmr qith cyuo "
 SMTP_HOST="smtp.gmail.com"
-SMTP_ADDR="smtp.gmail.com:587"
+SMTP_PORT="587"
+SMTP_ADDR="$SMTP_HOST:$SMTP_PORT"
 
 # JWT Configuration
 JWT_EXP=604800  # 3600*24*7 (7 dias em segundos)
